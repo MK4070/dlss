@@ -1,4 +1,4 @@
-module github.com/MK4070/proglog
+module github.com/MK4070/dlss
 
 go 1.24.1
 

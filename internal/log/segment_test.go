@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	api "github.com/MK4070/proglog/api/v1"
+	api "github.com/MK4070/dlss/api/v1"
 	"github.com/stretchr/testify/require"
 )
 

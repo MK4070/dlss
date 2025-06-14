@@ -1,4 +1,4 @@
-CONFIG_PATH=$(HOME)/.proglog/
+CONFIG_PATH=$(HOME)/.dlss/
 
 .PHONY: init
 init:

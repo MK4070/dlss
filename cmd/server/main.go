@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/MK4070/proglog/internal/server"
+	"github.com/MK4070/dlss/internal/server"
 )
 
 func main() {

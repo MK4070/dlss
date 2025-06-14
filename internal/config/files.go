@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 )
 
+const _CONFIG_FOLDER string = ".dlss"
+
 var (
 	CAFile               = configFile("ca.pem")
 	ServerCertFile       = configFile("server.pem")
@@ -25,5 +27,5 @@ func configFile(filename string) string {
 	if err != nil {
 		panic(err)
 	}
-	return filepath.Join(homeDir, ".proglog", filename)
+	return filepath.Join(homeDir, _CONFIG_FOLDER, filename)
 }
