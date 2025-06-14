@@ -36,10 +36,12 @@ func SetupTLSConfig(cfg TLSConfig) (*tls.Config, error) {
 		}
 		if cfg.Server {
 			// mutual TLS
+			// server will verify client certs
 			tlsConfig.ClientCAs = ca
 			tlsConfig.ClientAuth = tls.RequireAndVerifyClientCert
 		} else {
 			// one-way TLS
+			// client will verify server certs
 			tlsConfig.RootCAs = ca
 		}
 		tlsConfig.ServerName = cfg.ServerAddress
