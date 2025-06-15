@@ -47,3 +47,7 @@ $(CONFIG_PATH)/policy.csv:
 .PHONY: test
 test: $(CONFIG_PATH)/policy.csv $(CONFIG_PATH)/model.conf
 		go test -v -cover ./...
+
+.PHONY: test_metric
+test_metric: 
+		go test ./internal/server -v -debug=true

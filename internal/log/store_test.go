@@ -27,6 +27,8 @@ func TestStoreAppendRead(t *testing.T) {
 	s, err = newStore(f)
 	require.NoError(t, err)
 	testRead(t, s)
+	err = s.Close()
+	require.NoError(t, err)
 }
 
 func testAppend(t *testing.T, s *store) {
@@ -72,20 +74,23 @@ func TestStoreClose(t *testing.T) {
 	f, err := os.CreateTemp(os.TempDir(), "store_close_test")
 	require.NoError(t, err)
 	defer os.Remove(f.Name())
+
+	fi, err := f.Stat()
+	require.NoError(t, err)
+	beforeSize := fi.Size()
+
 	s, err := newStore(f)
 	require.NoError(t, err)
 	_, _, err = s.Append(write)
 	require.NoError(t, err)
-
-	f, beforeSize, err := openFile(f.Name())
-	require.NoError(t, err)
-
 	err = s.Close()
 	require.NoError(t, err)
 
-	_, afterSize, err := openFile(f.Name())
+	f, afterSize, err := openFile(f.Name())
 	require.NoError(t, err)
 	require.True(t, afterSize > beforeSize)
+	err = f.Close()
+	require.NoError(t, err)
 }
 
 func openFile(name string) (file *os.File, size int64, err error) {

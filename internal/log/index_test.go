@@ -54,4 +54,6 @@ func TestIndex(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, entries[len(entries)-1].Off, off)
 	require.Equal(t, entries[len(entries)-1].Pos, pos)
+	err = f.Close()
+	require.NoError(t, err)
 }
