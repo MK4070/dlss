@@ -11,6 +11,7 @@ import (
 	api "github.com/MK4070/dlss/api/v1"
 	"github.com/MK4070/dlss/internal/agent"
 	"github.com/MK4070/dlss/internal/config"
+	"github.com/MK4070/dlss/internal/loadbalance"
 	"github.com/stretchr/testify/require"
 	"github.com/travisjeffery/go-dynaport"
 	"google.golang.org/grpc"
@@ -88,6 +89,8 @@ func TestAgent(t *testing.T) {
 		},
 	)
 	require.NoError(t, err)
+	// wait until replication has finished
+	time.Sleep(3 * time.Second)
 	consumeResponse, err := leaderClient.Consume(
 		context.Background(),
 		&api.ConsumeRequest{
@@ -96,9 +99,6 @@ func TestAgent(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.Equal(t, consumeResponse.Record.Value, []byte("foo"))
-
-	// wait until replication has finished
-	time.Sleep(3 * time.Second)
 
 	followerClient := client(t, agents[1], peerTLSConfig)
 	consumeResponse, err = followerClient.Consume(
@@ -132,7 +132,7 @@ func client(
 	rpcAddr, err := agent.Config.RPCAddr()
 	require.NoError(t, err)
 	conn, err := grpc.NewClient(
-		rpcAddr,
+		(fmt.Sprintf("%s:///%s", loadbalance.Scheme, rpcAddr)),
 		grpc.WithTransportCredentials(tlsCreds),
 	)
 	require.NoError(t, err)
