@@ -51,3 +51,7 @@ test: $(CONFIG_PATH)/policy.csv $(CONFIG_PATH)/model.conf
 .PHONY: test_metric
 test_metric: 
 		go test ./internal/server -v -debug=true
+
+TAG ?= 0.0.1
+build-docker:
+		docker build -t github.com/mk4070/dlss:$(TAG) .

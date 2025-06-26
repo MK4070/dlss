@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "dlss.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "dlss.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels: {{ include "dlss.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "dlss.fullname" . }}
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      name: {{ include "dlss.fullname" . }}
+      labels: {{ include "dlss.labels" . | nindent 8 }}
+    spec:
+      initContainers:
+      - name: {{ include "dlss.fullname" . }}-config-init
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |-
+            ID=$(echo $HOSTNAME | rev | cut -d- -f1 | rev)
+            echo "data-dir: /var/run/dlss/data" > /var/run/dlss/config.yaml
+            echo "rpc-port: {{ .Values.rpcPort }}" >> /var/run/dlss/config.yaml
+            echo "bind-addr: ${HOSTNAME}.dlss.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.serfPort }}" >> /var/run/dlss/config.yaml
+            if [ "$ID" = "0" ]; then
+              echo "bootstrap: true" >> /var/run/dlss/config.yaml
+            else
+              echo "bootstrap: false" >> /var/run/dlss/config.yaml
+              echo "start-join-addrs: \"dlss-0.dlss.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.serfPort }}\"" >> /var/run/dlss/config.yaml
+            fi
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/run/dlss
+      containers:
+      - name: {{ include "dlss.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.rpcPort }}
+          name: rpc
+        - containerPort: {{ .Values.serfPort }}
+          name: serf
+        args:
+          - --config-file=/var/run/dlss/config.yaml
+        readinessProbe:
+          grpc:
+            port: {{ .Values.rpcPort }}
+          initialDelaySeconds: 10
+        livenessProbe:
+          grpc:
+            port: {{ .Values.rpcPort }}
+          initialDelaySeconds: 10
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/run/dlss
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.storage }}

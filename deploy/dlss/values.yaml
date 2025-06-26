@@ -1,0 +1,9 @@
+# Default values for dlss.
+image:
+  repository: github.com/mk4070/dlss
+  tag: 0.0.1
+  pullPolicy: IfNotPresent
+serfPort: 8401
+rpcPort: 8400
+replicas: 3
+storage: 1Gi
