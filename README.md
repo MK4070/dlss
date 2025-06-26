@@ -2,7 +2,6 @@
 
 A **distributed, secure, observable commit log system** built in Go. This system offers leader-based replication, gRPC APIs, service discovery, and optional HTTP/JSON interface. Designed for running in local Kubernetes clusters with robust observability, security, and modular extensibility.
 
----
 
 ## Features
 
@@ -18,5 +17,3 @@ A **distributed, secure, observable commit log system** built in Go. This system
 - **ACL-based authorization** for fine-grained access control
 - **Health checks** via gRPC health service
 - **Distributed tracing and metrics** for observability
-
----
