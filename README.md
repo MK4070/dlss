@@ -17,3 +17,48 @@ A **distributed, secure, observable commit log system** built in Go. This system
 - **ACL-based authorization** for fine-grained access control
 - **Health checks** via gRPC health service
 - **Distributed tracing and metrics** for observability
+
+## Running Tests
+
+```bash
+    # initialize the service directory
+    make init
+
+    # generate certs
+    make gencert
+
+    # run standard test-suite
+    make test
+
+    # run metric-specific tests
+    make test-metric
+```
+
+
+## Running Cluster Locally
+
+### Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- `docker`
+- `kind` (Kubernetes in Docker)
+- `helm`
+- `kubectl`
+
+```bash
+    # generate docker image
+    docker build -t <image-name>:<tag> <path-to-Dockerfile-or-context>
+
+    # spin-up kind cluster
+    kind create cluster
+    
+    # load the created image into the cluster
+    kind load docker-image <image-name>
+    
+    # install helm chart in the cluster
+    helm install dlss deploy/dlss
+
+    # check pods status
+    kubectl get pods
+```

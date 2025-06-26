@@ -48,8 +48,8 @@ $(CONFIG_PATH)/policy.csv:
 test: $(CONFIG_PATH)/policy.csv $(CONFIG_PATH)/model.conf
 		go test -v -cover ./...
 
-.PHONY: test_metric
-test_metric: 
+.PHONY: test-metric
+test-metric: 
 		go test ./internal/server -v -debug=true
 
 TAG ?= 0.0.1
